@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -36,6 +38,13 @@ private val bottomDestinations = listOf(
     BottomDestination("settings", "設定", Icons.Default.Settings)
 )
 
+private fun NavHostController.navigateToTopLevel(route: String) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id)
+        launchSingleTop = true
+    }
+}
+
 @Composable
 fun DormKitApp(viewModel: MainViewModel) {
     val navController = rememberNavController()
@@ -49,14 +58,11 @@ fun DormKitApp(viewModel: MainViewModel) {
                 NavigationBar {
                     bottomDestinations.forEach { destination ->
                         NavigationBarItem(
+                            modifier = Modifier.testTag("bottom_${destination.route}"),
                             selected = route == destination.route,
                             onClick = {
                                 if (destination.route == "inventory") viewModel.clearInventoryFilters()
-                                navController.navigate(destination.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
+                                navController.navigateToTopLevel(destination.route)
                             },
                             icon = { Icon(destination.icon, contentDescription = destination.label) },
                             label = { Text(destination.label) }
@@ -76,9 +82,9 @@ fun DormKitApp(viewModel: MainViewModel) {
                     viewModel = viewModel,
                     onInventory = { lowOnly ->
                         viewModel.showLowStockOnly(lowOnly)
-                        navController.navigate("inventory")
+                        navController.navigateToTopLevel("inventory")
                     },
-                    onPacking = { navController.navigate("packing") },
+                    onPacking = { navController.navigateToTopLevel("packing") },
                     onLaundry = { navController.navigate("laundry") }
                 )
             }

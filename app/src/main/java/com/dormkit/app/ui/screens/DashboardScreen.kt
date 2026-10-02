@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -152,9 +153,24 @@ fun DashboardScreen(
             fontWeight = FontWeight.Bold
         )
         Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            QuickAction(Icons.Default.Inventory2, location.inventoryTitle, "管理${location.label}的物品數量") { onInventory(false) }
-            QuickAction(Icons.Default.Checklist, "回家清單", "帶回家／回宿舍") { onPacking() }
-            QuickAction(Icons.Default.LocalLaundryService, "洗衣計時器", "到時通知你") { onLaundry() }
+            QuickAction(
+                Icons.Default.Inventory2,
+                location.inventoryTitle,
+                "管理${location.label}的物品數量",
+                Modifier.testTag("quick_inventory")
+            ) { onInventory(false) }
+            QuickAction(
+                Icons.Default.Checklist,
+                "回家清單",
+                "帶回家／回宿舍",
+                Modifier.testTag("quick_packing")
+            ) { onPacking() }
+            QuickAction(
+                Icons.Default.LocalLaundryService,
+                "洗衣計時器",
+                "到時通知你",
+                Modifier.testTag("quick_laundry")
+            ) { onLaundry() }
         }
             Spacer(Modifier.height(88.dp))
         }
@@ -168,8 +184,14 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun QuickAction(icon: ImageVector, title: String, subtitle: String, onClick: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+private fun QuickAction(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Card(modifier = modifier.fillMaxWidth().clickable(onClick = onClick)) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
