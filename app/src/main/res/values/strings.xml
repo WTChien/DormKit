@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DormKit</string>
+    <string name="laundry_channel_name">洗衣計時器</string>
+    <string name="laundry_channel_description">洗衣完成提醒</string>
+    <string name="laundry_done_title">洗衣完成了</string>
+    <string name="laundry_done_message">記得去拿衣服！</string>
+</resources>
